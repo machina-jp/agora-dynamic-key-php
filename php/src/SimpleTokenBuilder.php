@@ -1,87 +1,144 @@
 <?php
 
-require "AccessToken.php";
-
-$Role = array(
-    "kRoleAttendee" => 0,  // for communication
-    "kRolePublisher" => 1, // for live broadcast
-    "kRoleSubscriber" => 2,  // for live broadcast
-    "kRoleAdmin" => 101
-);
-
-$attendeePrivileges = array(
-    $Privileges["kJoinChannel"] => 0,
-    $Privileges["kPublishAudioStream"] => 0,
-    $Privileges["kPublishVideoStream"] => 0,
-    $Privileges["kPublishDataStream"] => 0
-);
-
-
-$publisherPrivileges = array(
-    $Privileges["kJoinChannel"] => 0,
-    $Privileges["kPublishAudioStream"] => 0,
-    $Privileges["kPublishVideoStream"] => 0,
-    $Privileges["kPublishDataStream"] => 0,
-    $Privileges["kPublishAudioCdn"] => 0,
-    $Privileges["kPublishVideoCdn"] => 0,
-    $Privileges["kInvitePublishAudioStream"] => 0,
-    $Privileges["kInvitePublishVideoStream"] => 0,
-    $Privileges["kInvitePublishDataStream"] => 0
-);
-
-$subscriberPrivileges = array(
-    $Privileges["kJoinChannel"] => 0,
-    $Privileges["kRequestPublishAudioStream"] => 0,
-    $Privileges["kRequestPublishVideoStream"] => 0,
-    $Privileges["kRequestPublishDataStream"] => 0
-);
-
-$adminPrivileges = array(
-    $Privileges["kJoinChannel"] => 0,
-    $Privileges["kPublishAudioStream"] => 0,
-    $Privileges["kPublishVideoStream"] => 0,
-    $Privileges["kPublishDataStream"] => 0,
-    $Privileges["kAdministrateChannel"] => 0
-);
-
-$RolePrivileges = array(
-	$Role["kRoleAttendee"] => $attendeePrivileges,
-    $Role["kRolePublisher"] => $publisherPrivileges,
-    $Role["kRoleSubscriber"] => $subscriberPrivileges,
-    $Role["kRoleAdmin"] => $adminPrivileges
-);
-
-
+namespace Agora\AgoraDynamicKey;
 
 class SimpleTokenBuilder
 {
-    public $token;
-    public function __construct($appID, $appCertificate, $channelName, $uid){
-        $this->token = new AccessToken();
-        $this->token->appID = $appID;
-        $this->token->appCertificate = $appCertificate;
-        $this->token->channelName = $channelName;
-        $this->token->setUid($uid);
+    private $token;
+
+    private $rolePrivileges;
+
+    /**
+     * SimpleTokenBuilder constructor.
+     * @param $appId
+     * @param $appCertificate
+     * @param $channelName
+     * @param $uid
+     */
+    public function __construct($appId, $appCertificate, $channelName, $uid){
+        $this->token = AccessToken::init($appId, $appCertificate, $channelName, $uid);
+        $this->init();
     }
-    public static function initWithToken($token, $appCertificate, $channel, $uid){
+
+    /**
+     * @param $token
+     * @param $appCertificate
+     * @param $channel
+     * @param $uid
+     */
+    public function initWithToken($token, $appCertificate, $channel, $uid){
         $this->token = AccessToken::initWithToken($token, $appCertificate, $channel, $uid);
+        $this->init();
     }
+
+    /**
+     * @param $role
+     */
     public function initPrivilege($role){
-        $p = $RolePrivileges[$role];
+        $p = $this->rolePrivileges[$role];
         foreach($p as $key => $value){
             $this->setPrivilege($key, $value);
         }
     }
+
+    /**
+     * @param $salt
+     */
+    public function setSalt($salt)
+    {
+        $this->token->setSalt($salt);
+    }
+
+    /**
+     * @param $ts
+     */
+    public function setTs($ts)
+    {
+        $this->token->setTs($ts);
+    }
+
+    /**
+     * @param $uid
+     */
+    public function setUid($uid)
+    {
+        $this->token->setUid($uid);
+    }
+
+    /**
+     * @param $privilege
+     * @param $expireTimestamp
+     */
     public function setPrivilege($privilege, $expireTimestamp){
         $this->token->addPrivilege($privilege, $expireTimestamp);
     }
+
+    /**
+     * @param $privilege
+     */
     public function removePrivilege($privilege){
-        unset($this->token->message->privileges[$privilege]);
+        $this->token->removePrivilege($privilege);
     }
+
+    /**
+     * @return string
+     */
     public function buildToken(){
         return $this->token->build();
     }
+
+    /**
+     *
+     */
+    private function init()
+    {
+        $role = [
+            "kRoleAttendee"   => 0,  // for communication
+            "kRolePublisher"  => 1, // for live broadcast
+            "kRoleSubscriber" => 2,  // for live broadcast
+            "kRoleAdmin"      => 101
+        ];
+
+        $attendeePrivileges = [
+            AccessToken::PRIVILEGE_JOIN_CHANNEL         => 0,
+            AccessToken::PRIVILEGE_PUBLISH_AUDIO_STREAM => 0,
+            AccessToken::PRIVILEGE_PUBLISH_VIDEO_STREAM => 0,
+            AccessToken::PRIVILEGE_PUBLISH_DATA_STREAM  => 0
+        ];
+
+
+        $publisherPrivileges = [
+            AccessToken::PRIVILEGE_JOIN_CHANNEL         => 0,
+            AccessToken::PRIVILEGE_PUBLISH_AUDIO_STREAM => 0,
+            AccessToken::PRIVILEGE_PUBLISH_VIDEO_STREAM => 0,
+            AccessToken::PRIVILEGE_PUBLISH_DATA_STREAM  => 0,
+            AccessToken::PRIVILEGE_PUBLISH_AUDIO_CDN    => 0,
+            AccessToken::PRIVILEGE_PUBLISH_VIDEO_CDN    => 0,
+            AccessToken::PRIVILEGE_INVITE_PUBLISH_AUDIO_STREAM => 0,
+            AccessToken::PRIVILEGE_INVITE_PUBLISH_VIDEO_STREAM => 0,
+            AccessToken::PRIVILEGE_INVITE_PUBLISH_DATA_STREAM  => 0
+        ];
+
+        $subscriberPrivileges = [
+            AccessToken::PRIVILEGE_JOIN_CHANNEL                 => 0,
+            AccessToken::PRIVILEGE_REQUEST_PUBLISH_AUDIO_STREAM => 0,
+            AccessToken::PRIVILEGE_REQUEST_PUBLISH_VIDEO_STREAM => 0,
+            AccessToken::PRIVILEGE_REQUEST_PUBLISH_DATA_STREAM  => 0
+        ];
+
+        $adminPrivileges = [
+            AccessToken::PRIVILEGE_JOIN_CHANNEL          => 0,
+            AccessToken::PRIVILEGE_PUBLISH_AUDIO_STREAM  => 0,
+            AccessToken::PRIVILEGE_PUBLISH_VIDEO_STREAM  => 0,
+            AccessToken::PRIVILEGE_PUBLISH_DATA_STREAM   => 0,
+            AccessToken::PRIVILEGE_ADMINISTRATE_CHANNEL  => 0
+        ];
+
+        $this->rolePrivileges = [
+            $role["kRoleAttendee"]   => $attendeePrivileges,
+            $role["kRolePublisher"]  => $publisherPrivileges,
+            $role["kRoleSubscriber"] => $subscriberPrivileges,
+            $role["kRoleAdmin"]      => $adminPrivileges
+        ];
+    }
 }
-
-
-?>

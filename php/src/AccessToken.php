@@ -1,92 +1,164 @@
 <?php
 
+namespace Agora\AgoraDynamicKey;
 
-$Privileges = array(
-    "kJoinChannel" => 1,
-    "kPublishAudioStream" => 2,
-    "kPublishVideoStream" => 3,
-    "kPublishDataStream" => 4,
-    "kPublishAudioCdn" => 5,
-    "kPublishVideoCdn" => 6,
-    "kRequestPublishAudioStream" => 7,
-    "kRequestPublishVideoStream" => 8,
-    "kRequestPublishDataStream" => 9,
-    "kInvitePublishAudioStream" => 10,
-    "kInvitePublishVideoStream" => 11,
-    "kInvitePublishDataStream" => 12,
-    "kAdministrateChannel" => 101
-);
-
-class Message
-{
-    public $salt;
-    public $ts;
-    public $privileges;
-    public function __construct()
-    {
-        $this->salt = rand(0, 100000);
-
-        date_default_timezone_set("UTC");
-        $date = new DateTime();
-        $this->ts = $date->getTimestamp() + 24 * 3600;
-
-        $this->privileges = array();
-    }
-
-    public function packContent()
-    {
-        $buffer = unpack("C*", pack("V", $this->salt));
-        $buffer = array_merge($buffer, unpack("C*", pack("V", $this->ts)));
-        $buffer = array_merge($buffer, unpack("C*", pack("v", sizeof($this->privileges))));
-        foreach ($this->privileges as $key => $value) {
-            $buffer = array_merge($buffer, unpack("C*", pack("v", $key)));
-            $buffer = array_merge($buffer, unpack("C*", pack("V", $value)));
-        }
-        return $buffer;
-    }
-
-    public function unpackContent($msg){
-        $pos = 0;
-        $salt = unpack("V", substr($msg, $pos, 4))[1];
-        $pos += 4;
-        $ts = unpack("V", substr($msg, $pos, 4))[1];
-        $pos += 4;
-        $size = unpack("v", substr($msg, $pos, 2))[1];
-        $pos += 2;
-
-        $privileges = array();
-        for($i = 0; $i < $size; $i++){
-            $key = unpack("v", substr($msg, $pos, 2));
-            $pos += 2;
-            $value = unpack("V", substr($msg, $pos, 4));
-            $pos += 4;
-            $privileges[$key[1]] = $value[1];
-        }
-        $this->salt = $salt;
-        $this->ts = $ts;
-        $this->privileges = $privileges;
-    }
-}
 
 class AccessToken
 {
-    public $appID, $appCertificate, $channelName, $uid;
-    public $message;
+    private $appId;
+    private $appCertificate;
+    private $channelName;
+    private $uid;
 
-    public function __construct()
+    /**
+     * @var Message
+     */
+    private $message;
+
+    // roles
+    const ROLE_ATTENDEE   = 0;  // for communication
+    const ROLE_PUBLISHER  = 1;  // for live broadcast
+    const ROLE_SUBSCRIBER = 2;  // for live broadcast
+    const ROLE_ADMIN      = 101;
+
+    // privileges
+    const PRIVILEGE_JOIN_CHANNEL                 = 1;
+    const PRIVILEGE_PUBLISH_AUDIO_STREAM         = 2;
+    const PRIVILEGE_PUBLISH_VIDEO_STREAM         = 3;
+    const PRIVILEGE_PUBLISH_DATA_STREAM          = 4;
+    const PRIVILEGE_PUBLISH_AUDIO_CDN            = 5;
+    const PRIVILEGE_PUBLISH_VIDEO_CDN            = 6;
+    const PRIVILEGE_REQUEST_PUBLISH_AUDIO_STREAM = 7;
+    const PRIVILEGE_REQUEST_PUBLISH_VIDEO_STREAM = 8;
+    const PRIVILEGE_REQUEST_PUBLISH_DATA_STREAM  = 9;
+    const PRIVILEGE_INVITE_PUBLISH_AUDIO_STREAM  = 10;
+    const PRIVILEGE_INVITE_PUBLISH_VIDEO_STREAM  = 11;
+    const PRIVILEGE_INVITE_PUBLISH_DATA_STREAM   = 12;
+    const PRIVILEGE_ADMINISTRATE_CHANNEL         = 101;
+
+    private function __construct()
     {
         $this->message = new Message();
     }
 
-    public function setUid($uid){
-        if($uid === 0){
+    public function setUid($uid)
+    {
+        if ($uid === 0) {
             $this->uid = "";
         } else {
             $this->uid = $uid . '';
         }
     }
 
-    public function is_nonempty_string($name, $str){
+    /**
+     * @param $appId
+     * @param $appCertificate
+     * @param $channelName
+     * @param $uid
+     *
+     * @return static|null
+     */
+    public static function init($appId, $appCertificate, $channelName, $uid){
+        $accessToken = new static();
+
+        if(!$accessToken->isNonEmptyString("appID", $appId) ||
+            !$accessToken->isNonEmptyString("appCertificate", $appCertificate) ||
+            !$accessToken->isNonEmptyString("channelName", $channelName)){
+            return null;
+        }
+
+        $accessToken->appId = $appId;
+        $accessToken->appCertificate = $appCertificate;
+        $accessToken->channelName = $channelName;
+
+        $accessToken->setUid($uid);
+
+        return $accessToken;
+    }
+
+
+    /**
+     * @param $token
+     * @param $appCertificate
+     * @param $channelName
+     * @param $uid
+     *
+     * @return null|static
+     */
+    public static function initWithToken($token, $appCertificate, $channelName, $uid){
+        $accessToken = new static();
+
+        if(!$accessToken->extract($token, $appCertificate, $channelName, $uid)){
+            return null;
+        }
+
+        return $accessToken;
+    }
+
+    /**
+     * @param $key
+     * @param $expireTimestamp
+     * @return $this
+     */
+    public function addPrivilege($key, $expireTimestamp)
+    {
+        $this->message->privileges[$key] = $expireTimestamp;
+
+        return $this;
+    }
+
+    /**
+     * @param $privilege
+     * @return $this
+     */
+    public function removePrivilege($privilege)
+    {
+        unset($this->message->privileges[$privilege]);
+
+        return $this;
+    }
+
+    /**
+     * @param $salt
+     */
+    public function setSalt($salt)
+    {
+        $this->message->salt = $salt;
+    }
+
+    /**
+     * @param int $ts
+     */
+    public function setTs($ts)
+    {
+        $this->message->ts = $ts;
+    }
+
+    /**
+     * @return string
+     */
+    public function build()
+    {
+        $msg = $this->message->packContent();
+        $val = array_merge(unpack("C*", $this->appId), unpack("C*", $this->channelName), unpack("C*", $this->uid), $msg);
+
+        $sig = hash_hmac('sha256', implode(array_map("chr", $val)), $this->appCertificate, true);
+
+        $crc_channel_name = crc32($this->channelName) & 0xffffffff;
+        $crc_uid = crc32($this->uid) & 0xffffffff;
+
+        $content = array_merge(unpack("C*", self::packString($sig)), unpack("C*", pack("V", $crc_channel_name)), unpack("C*", pack("V", $crc_uid)), unpack("C*", pack("v", count($msg))), $msg);
+        $version = "006";
+        $ret = $version . $this->appId . base64_encode(implode(array_map("chr", $content)));
+        return $ret;
+    }
+
+    /**
+     * @param $name
+     * @param $str
+     * @return bool
+     */
+    private function isNonEmptyString($name, $str){
         if(is_string($str) && $str !== ""){
             return true;
         }
@@ -94,40 +166,14 @@ class AccessToken
         return false;
     }
 
-    public static function init($appID, $appCertificate, $channelName, $uid){
-        $accessToken = new AccessToken();
-
-        if(!$accessToken->is_nonempty_string("appID", $appID) || 
-            !$accessToken->is_nonempty_string("appCertificate", $appCertificate) ||
-            !$accessToken->is_nonempty_string("channelName", $channelName)){
-            return null;
-        }
-
-        $accessToken->appID = $appID;
-        $accessToken->appCertificate = $appCertificate;
-        $accessToken->channelName = $channelName;
-
-        $accessToken->setUid($uid);
-        $accessToken->message = new Message();
-        return $accessToken;
-    }
-
-
-    public static function initWithToken($token, $appCertificate, $channel, $uid){
-        $accessToken = new AccessToken();
-        if(!$accessToken->extract($token, $appCertificate, $channel, $uid)){
-            return null;
-        }
-        return $accessToken;
-    }
-
-    public function addPrivilege($key, $expireTimestamp)
-    {
-        $this->message->privileges[$key] = $expireTimestamp;
-        return $this;
-    }
-
-    protected function extract($token, $appCertificate, $channelName, $uid){
+    /**
+     * @param $token
+     * @param $appCertificate
+     * @param $channelName
+     * @param $uid
+     * @return bool
+     */
+    private function extract($token, $appCertificate, $channelName, $uid){
         $ver_len = 3;
         $appid_len = 32;
         $version = substr($token, 0, $ver_len);
@@ -136,9 +182,9 @@ class AccessToken
             return false;
         }
 
-        if(!$this->is_nonempty_string("token", $token) || 
-            !$this->is_nonempty_string("appCertificate", $appCertificate) ||
-            !$this->is_nonempty_string("channelName", $channelName)){
+        if(!$this->isNonEmptyString("token", $token) ||
+            !$this->isNonEmptyString("appCertificate", $appCertificate) ||
+            !$this->isNonEmptyString("channelName", $channelName)){
             return false;
         }
 
@@ -158,7 +204,7 @@ class AccessToken
         $pos += 2;
         $msg = substr($content, $pos, $msgLen);
 
-        $this->appID = $appid;
+        $this->appId = $appid;
         $message = new Message();
         $message->unpackContent($msg);
         $this->message = $message;
@@ -171,24 +217,13 @@ class AccessToken
         return true;
     }
 
-    public function build()
+    /**
+     * @param $value
+     * @return string
+     */
+    private static function packString($value)
     {
-        $msg = $this->message->packContent();
-        $val = array_merge(unpack("C*", $this->appID), unpack("C*", $this->channelName), unpack("C*", $this->uid), $msg);
-        
-        $sig = hash_hmac('sha256', implode(array_map("chr", $val)), $this->appCertificate, true);
-
-        $crc_channel_name = crc32($this->channelName) & 0xffffffff;
-        $crc_uid = crc32($this->uid) & 0xffffffff;
-
-        $content = array_merge(unpack("C*", packString($sig)), unpack("C*", pack("V", $crc_channel_name)), unpack("C*", pack("V", $crc_uid)), unpack("C*", pack("v", count($msg))), $msg);
-        $version = "006";
-        $ret = $version . $this->appID . base64_encode(implode(array_map("chr", $content)));
-        return $ret;
+        return pack("v", strlen($value)) . $value;
     }
 }
 
-function packString($value)
-{
-    return pack("v", strlen($value)) . $value;
-}

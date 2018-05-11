@@ -1,0 +1,11 @@
+{
+    "name": "agora/agora-dynamic-key",
+    "type": "library",
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Agora\\AgoraDynamicKey\\": "src/"
+        }
+    }
+}
