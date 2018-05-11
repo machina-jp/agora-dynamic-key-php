@@ -96,7 +96,7 @@ class SimpleTokenBuilder
             AccessToken::PRIVILEGE_JOIN_CHANNEL         => 0,
             AccessToken::PRIVILEGE_PUBLISH_AUDIO_STREAM => 0,
             AccessToken::PRIVILEGE_PUBLISH_VIDEO_STREAM => 0,
-            AccessToken::PRIVILEGE_PUBLISH_DATA_STREAM  => 0
+            AccessToken::PRIVILEGE_PUBLISH_DATA_STREAM  => 0,
         ];
 
 
@@ -109,14 +109,14 @@ class SimpleTokenBuilder
             AccessToken::PRIVILEGE_PUBLISH_VIDEO_CDN    => 0,
             AccessToken::PRIVILEGE_INVITE_PUBLISH_AUDIO_STREAM => 0,
             AccessToken::PRIVILEGE_INVITE_PUBLISH_VIDEO_STREAM => 0,
-            AccessToken::PRIVILEGE_INVITE_PUBLISH_DATA_STREAM  => 0
+            AccessToken::PRIVILEGE_INVITE_PUBLISH_DATA_STREAM  => 0,
         ];
 
         $subscriberPrivileges = [
             AccessToken::PRIVILEGE_JOIN_CHANNEL                 => 0,
             AccessToken::PRIVILEGE_REQUEST_PUBLISH_AUDIO_STREAM => 0,
             AccessToken::PRIVILEGE_REQUEST_PUBLISH_VIDEO_STREAM => 0,
-            AccessToken::PRIVILEGE_REQUEST_PUBLISH_DATA_STREAM  => 0
+            AccessToken::PRIVILEGE_REQUEST_PUBLISH_DATA_STREAM  => 0,
         ];
 
         $adminPrivileges = [
@@ -124,14 +124,14 @@ class SimpleTokenBuilder
             AccessToken::PRIVILEGE_PUBLISH_AUDIO_STREAM  => 0,
             AccessToken::PRIVILEGE_PUBLISH_VIDEO_STREAM  => 0,
             AccessToken::PRIVILEGE_PUBLISH_DATA_STREAM   => 0,
-            AccessToken::PRIVILEGE_ADMINISTRATE_CHANNEL  => 0
+            AccessToken::PRIVILEGE_ADMINISTRATE_CHANNEL  => 0,
         ];
 
         $this->rolePrivileges = [
             AccessToken::ROLE_ATTENDEE   => $attendeePrivileges,
             AccessToken::ROLE_PUBLISHER  => $publisherPrivileges,
             AccessToken::ROLE_SUBSCRIBER => $subscriberPrivileges,
-            AccessToken::ROLE_ADMIN      => $adminPrivileges
+            AccessToken::ROLE_ADMIN      => $adminPrivileges,
         ];
     }
 }
