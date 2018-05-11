@@ -1,5 +1,6 @@
 <?php
-require "../src/AccessToken.php";
+
+use Agora\AgoraDynamicKey\AccessToken;
 
 $appID = '970CA35de60c44645bbae8a215061b33';
 $appCertificate = '5CFd2fd1755d40ecb72977518be15d3b';
@@ -8,8 +9,6 @@ $uid = 2882341273;
 $expireTimestamp = 0;
 
 
-$builder = new AccessToken($appID, $appCertificate, $channelName, $uid);
-$builder->addPrivilege($Privileges["kJoinChannel"], $expireTimestamp);
+$builder = AccessToken::init($appID, $appCertificate, $channelName, $uid);
+$builder->addPrivilege(AccessToken::PRIVILEGE_JOIN_CHANNEL, $expireTimestamp);
 echo $builder->build();
-
-?>
