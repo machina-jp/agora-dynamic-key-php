@@ -92,13 +92,6 @@ class SimpleTokenBuilder
      */
     private function init()
     {
-        $role = [
-            "kRoleAttendee"   => 0,  // for communication
-            "kRolePublisher"  => 1, // for live broadcast
-            "kRoleSubscriber" => 2,  // for live broadcast
-            "kRoleAdmin"      => 101
-        ];
-
         $attendeePrivileges = [
             AccessToken::PRIVILEGE_JOIN_CHANNEL         => 0,
             AccessToken::PRIVILEGE_PUBLISH_AUDIO_STREAM => 0,
@@ -135,10 +128,10 @@ class SimpleTokenBuilder
         ];
 
         $this->rolePrivileges = [
-            $role["kRoleAttendee"]   => $attendeePrivileges,
-            $role["kRolePublisher"]  => $publisherPrivileges,
-            $role["kRoleSubscriber"] => $subscriberPrivileges,
-            $role["kRoleAdmin"]      => $adminPrivileges
+            AccessToken::ROLE_ATTENDEE   => $attendeePrivileges,
+            AccessToken::ROLE_PUBLISHER  => $publisherPrivileges,
+            AccessToken::ROLE_SUBSCRIBER => $subscriberPrivileges,
+            AccessToken::ROLE_ADMIN      => $adminPrivileges
         ];
     }
 }
