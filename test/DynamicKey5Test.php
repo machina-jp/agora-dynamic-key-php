@@ -1,62 +1,74 @@
 <?php
-include "TestTool.php";
-
 use Agora\AgoraDynamicKey\DynamicKey5;
+use PHPUnit\Framework\TestCase;
 
-    $appID = '970ca35de60c44645bbae8a215061b33';
-    $appCertificate = '5cfd2fd1755d40ecb72977518be15d3b';
-    $channelName = "7d72365eb983485397e3e3f9d460bdda";
-    $ts = 1446455472;
-    $randomInt = 58964981;
-    $uid = 2882341273;
-    $expiredTs = 1446455471;
+class DynamicKey5Test extends TestCase
+{
+    private $appID = '970ca35de60c44645bbae8a215061b33';
+    private $appCertificate = '5cfd2fd1755d40ecb72977518be15d3b';
+    private $channelName = "7d72365eb983485397e3e3f9d460bdda";
+    private $ts = 1446455472;
+    private $randomInt = 58964981;
+    private $uid = 2882341273;
+    private $expiredTs = 1446455471;
 
-    function testRecordingKey($appID, $appCertificate, $channelName, $ts, $randomInt, $uid, $expiredTs)
+    public function testRecordingKey()
     {
         $expected = "005AgAoADkyOUM5RTQ2MTg3QTAyMkJBQUIyNkI3QkYwMTg0MzhDNjc1Q0ZFMUEQAJcMo13mDERkW7roohUGGzOwKDdW9buDA68oN1YAAA==";
-        $actual = DynamicKey5::generateRecordingKey($appID, $appCertificate, $channelName, $ts, $randomInt, $uid, $expiredTs);
+        $actual = DynamicKey5::generateRecordingKey(
+            $this->appID,
+            $this->appCertificate,
+            $this->channelName,
+            $this->ts,
+            $this->randomInt,
+            $this->uid,
+            $this->expiredTs);
 
-        assertEqual($expected, $actual);
+        $this->assertEquals($expected, $actual);
     }
 
-    function testMediaChannelKey($appID, $appCertificate, $channelName, $ts, $randomInt, $uid, $expiredTs)
+    public function testMediaChannelKey()
     {
         $expected = "005AQAoAEJERTJDRDdFNkZDNkU0ODYxNkYxQTYwOUVFNTM1M0U5ODNCQjFDNDQQAJcMo13mDERkW7roohUGGzOwKDdW9buDA68oN1YAAA==";
 
-        $actual = DynamicKey5::generateMediaChannelKey($appID, $appCertificate, $channelName, $ts, $randomInt, $uid, $expiredTs);
+        $actual = DynamicKey5::generateMediaChannelKey(
+            $this->appID,
+            $this->appCertificate,
+            $this->channelName,
+            $this->ts,
+            $this->randomInt,
+            $this->uid,
+            $this->expiredTs);
 
-        assertEqual($expected, $actual);
+        $this->assertEquals($expected, $actual);
     }
 
-    function testInChannelPermission($appID, $appCertificate, $channelName, $ts, $randomInt, $uid, $expiredTs)
+    public function testInChannelPermission()
     {
         $noUpload = "005BAAoADgyNEQxNDE4M0FGRDkyOEQ4REFFMUU1OTg5NTg2MzA3MTEyNjRGNzQQAJcMo13mDERkW7roohUGGzOwKDdW9buDA68oN1YBAAEAAQAw";
         $generatedNoUpload = DynamicKey5::generateInChannelPermissionKey(
-            $appID,
-            $appCertificate,
-            $channelName,
-            $ts,
-            $randomInt,
-            $uid,
-            $expiredTs,
+            $this->appID,
+            $this->appCertificate,
+            $this->channelName,
+            $this->ts,
+            $this->randomInt,
+            $this->uid,
+            $this->expiredTs,
             DynamicKey5::NO_UPLOAD);
 
-        assertEqual($noUpload, $generatedNoUpload);
+        $this->assertEquals($noUpload, $generatedNoUpload);
 
         $audioVideoUpload = "005BAAoADJERDA3QThENTE2NzJGNjQwMzY5NTFBNzE0QkI5NTc0N0Q1QjZGQjMQAJcMo13mDERkW7roohUGGzOwKDdW9buDA68oN1YBAAEAAQAz";
         $generatedAudioVideoUpload = DynamicKey5::generateInChannelPermissionKey(
-            $appID,
-            $appCertificate,
-            $channelName,
-            $ts,
-            $randomInt,
-            $uid,
-            $expiredTs,
+            $this->appID,
+            $this->appCertificate,
+            $this->channelName,
+            $this->ts,
+            $this->randomInt,
+            $this->uid,
+            $this->expiredTs,
             DynamicKey5::AUDIO_VIDEO_UPLOAD);
 
-        assertEqual($audioVideoUpload, $generatedAudioVideoUpload);
+        $this->assertEquals($audioVideoUpload, $generatedAudioVideoUpload);
     }
-
-    testRecordingKey($appID, $appCertificate, $channelName, $ts, $randomInt, $uid, $expiredTs);
-    testMediaChannelKey($appID, $appCertificate, $channelName, $ts, $randomInt, $uid, $expiredTs);
-    testInChannelPermission($appID, $appCertificate, $channelName, $ts, $randomInt, $uid, $expiredTs);
+}
