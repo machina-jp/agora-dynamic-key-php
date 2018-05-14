@@ -1,5 +1,7 @@
 <?php
 
+namespace Agora\AgoraDynamicKey\Test;
+
 use PHPUnit\Framework\TestCase;
 
 class DynamicKeyTest extends TestCase

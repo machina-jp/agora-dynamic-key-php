@@ -1,4 +1,6 @@
 <?php
+namespace Agora\AgoraDynamicKey\Test;
+
 use Agora\AgoraDynamicKey\DynamicKey5;
 use PHPUnit\Framework\TestCase;
 
