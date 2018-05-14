@@ -94,9 +94,11 @@ class AccessTokenTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
     public function testInitializeWithInvalidValue()
     {
-        $builder = AccessToken::init("", $this->appCertificate, $this->channelName, $this->uid);
-        $this->assertNull($builder);
+        AccessToken::init("", $this->appCertificate, $this->channelName, $this->uid);
     }
 }

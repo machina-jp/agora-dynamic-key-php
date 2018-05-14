@@ -61,11 +61,9 @@ class AccessToken
     public static function init($appId, $appCertificate, $channelName, $uid){
         $accessToken = new static();
 
-        if(!$accessToken->isNonEmptyString("appID", $appId) ||
-            !$accessToken->isNonEmptyString("appCertificate", $appCertificate) ||
-            !$accessToken->isNonEmptyString("channelName", $channelName)){
-            return null;
-        }
+        $accessToken->throwExceptionIfEmptyString("appID", $appId);
+        $accessToken->throwExceptionIfEmptyString("appCertificate", $appCertificate);
+        $accessToken->throwExceptionIfEmptyString("channelName", $channelName);
 
         $accessToken->appId = $appId;
         $accessToken->appCertificate = $appCertificate;
@@ -154,16 +152,18 @@ class AccessToken
     }
 
     /**
-     * @param $name
-     * @param $str
-     * @return bool
+     * @param string $name Property name.
+     * @param string $str String value.
+     *
+     * @throws \InvalidArgumentException
+     *   Throw this exception if $str value is empty string
      */
-    private function isNonEmptyString($name, $str){
-        if(is_string($str) && $str !== ""){
-            return true;
+    private function throwExceptionIfEmptyString($name, $str){
+        if (is_string($str) && $str !== "") {
+            return;
         }
-        echo $name. " check failed, should be a non-empty string";
-        return false;
+
+        throw new \InvalidArgumentException($name . " check failed, should be a non-empty string");
     }
 
     /**
@@ -182,11 +182,9 @@ class AccessToken
             return false;
         }
 
-        if(!$this->isNonEmptyString("token", $token) ||
-            !$this->isNonEmptyString("appCertificate", $appCertificate) ||
-            !$this->isNonEmptyString("channelName", $channelName)){
-            return false;
-        }
+        $this->throwExceptionIfEmptyString("token", $token);
+        $this->throwExceptionIfEmptyString("appCertificate", $appCertificate);
+        $this->throwExceptionIfEmptyString("channelName", $channelName);
 
         $appid = substr($token, $ver_len, $appid_len);
         $content = (base64_decode(substr($token, $ver_len + $appid_len, strlen($token) - ($ver_len + $appid_len))));
