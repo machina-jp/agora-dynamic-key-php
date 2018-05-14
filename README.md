@@ -14,17 +14,7 @@ See [sample codes](./sample) or [some testcases](./test).
 # Test
 
 ```
-[cw-tanaka@macbook] % ./vendor/bin/phpunit                                                                                                       [(master) ~/workspace/agora-dynamic-key-php]
-PHPUnit 7.1.5 by Sebastian Bergmann and contributors.
-
-Runtime:       PHP 7.1.14
-Configuration: /Users/cw-tanaka/workspace/agora-dynamic-key-php/phpunit.xml
-
-.............                                                     13 / 13 (100%)
-
-Time: 46 ms, Memory: 4.00MB
-
-OK (13 tests, 14 assertions)
+$ ./vendor/bin/phpunit
 ```
 
 Require `composer install` before test.
