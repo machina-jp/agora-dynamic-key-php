@@ -1,5 +1,7 @@
 <?php
 
+namespace Agora\AgoraDynamicKey\Test;
+
 use Agora\AgoraDynamicKey\AccessToken;
 use Agora\AgoraDynamicKey\SimpleTokenBuilder;
 use PHPUnit\Framework\TestCase;
