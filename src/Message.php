@@ -15,8 +15,8 @@ class Message
     {
         $this->salt = rand(0, 100000);
 
-        date_default_timezone_set("UTC");
         $date = new \DateTime();
+        $date->setTimezone(new \DateTimeZone('UTC'));
         $this->ts = $date->getTimestamp() + 24 * 3600;
 
         $this->privileges = [];
