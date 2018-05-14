@@ -3,6 +3,10 @@
 This is the AgoraDynamicKey library for php.
 This repository forks from [AgoraDynamicKey](https://github.com/AgoraIO/AgoraDynamicKey).
 
+# Require
+
+- php >= 5.6
+
 # Documents
 
 - [Security Key](https://docs.agora.io/en/2.2/product/Video/Agora%20Basics/key_web)
