@@ -35,6 +35,7 @@ class AccessToken
     const PRIVILEGE_INVITE_PUBLISH_VIDEO_STREAM  = 11;
     const PRIVILEGE_INVITE_PUBLISH_DATA_STREAM   = 12;
     const PRIVILEGE_ADMINISTRATE_CHANNEL         = 101;
+    const PRIVILEGE_RTM_LOGIN                    = 1000;
 
     private function __construct()
     {
@@ -71,6 +72,7 @@ class AccessToken
 
         $accessToken->setUid($uid);
 
+        $accessToken->message = new Message();
         return $accessToken;
     }
 
