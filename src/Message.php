@@ -3,7 +3,6 @@
 
 namespace Agora\AgoraDynamicKey;
 
-
 class Message
 {
     public $salt;
@@ -34,7 +33,8 @@ class Message
         return $buffer;
     }
 
-    public function unpackContent($msg){
+    public function unpackContent($msg)
+    {
         $pos = 0;
         $salt = unpack("V", substr($msg, $pos, 4))[1];
         $pos += 4;
@@ -44,7 +44,7 @@ class Message
         $pos += 2;
 
         $privileges = array();
-        for($i = 0; $i < $size; $i++){
+        for ($i = 0; $i < $size; $i++) {
             $key = unpack("v", substr($msg, $pos, 2));
             $pos += 2;
             $value = unpack("V", substr($msg, $pos, 4));
@@ -56,4 +56,3 @@ class Message
         $this->privileges = $privileges;
     }
 }
-

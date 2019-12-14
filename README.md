@@ -22,5 +22,3 @@ $ ./vendor/bin/phpunit
 ```
 
 Require `composer install` before test.
-
-

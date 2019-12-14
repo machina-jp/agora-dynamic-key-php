@@ -15,7 +15,8 @@ class SimpleTokenBuilder
      * @param $channelName
      * @param $uid
      */
-    public function __construct($appId, $appCertificate, $channelName, $uid){
+    public function __construct($appId, $appCertificate, $channelName, $uid)
+    {
         $this->token = AccessToken::init($appId, $appCertificate, $channelName, $uid);
         $this->init();
     }
@@ -26,7 +27,8 @@ class SimpleTokenBuilder
      * @param $channel
      * @param $uid
      */
-    public function initWithToken($token, $appCertificate, $channel, $uid){
+    public function initWithToken($token, $appCertificate, $channel, $uid)
+    {
         $this->token = AccessToken::initWithToken($token, $appCertificate, $channel, $uid);
         $this->init();
     }
@@ -34,9 +36,10 @@ class SimpleTokenBuilder
     /**
      * @param $role
      */
-    public function initPrivilege($role){
+    public function initPrivilege($role)
+    {
         $p = $this->rolePrivileges[$role];
-        foreach($p as $key => $value){
+        foreach ($p as $key => $value) {
             $this->setPrivilege($key, $value);
         }
     }
@@ -69,21 +72,24 @@ class SimpleTokenBuilder
      * @param $privilege
      * @param $expireTimestamp
      */
-    public function setPrivilege($privilege, $expireTimestamp){
+    public function setPrivilege($privilege, $expireTimestamp)
+    {
         $this->token->addPrivilege($privilege, $expireTimestamp);
     }
 
     /**
      * @param $privilege
      */
-    public function removePrivilege($privilege){
+    public function removePrivilege($privilege)
+    {
         $this->token->removePrivilege($privilege);
     }
 
     /**
      * @return string
      */
-    public function buildToken(){
+    public function buildToken()
+    {
         return $this->token->build();
     }
 

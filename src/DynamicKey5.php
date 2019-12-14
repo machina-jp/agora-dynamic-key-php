@@ -28,7 +28,8 @@ class DynamicKey5
             $uid,
             $expiredTs,
             self::RECORDING_SERVICE,
-            []);
+            []
+        );
     }
 
     public static function generateMediaChannelKey($appId, $appCertificate, $channelName, $ts, $randomInt, $uid, $expiredTs)
@@ -42,7 +43,8 @@ class DynamicKey5
             $uid,
             $expiredTs,
             self::MEDIA_CHANNEL_SERVICE,
-            []);
+            []
+        );
     }
 
     public static function generateInChannelPermissionKey($appId, $appCertificate, $channelName, $ts, $randomInt, $uid, $expiredTs, $permission)
@@ -58,7 +60,8 @@ class DynamicKey5
             $uid,
             $expiredTs,
             self::IN_CHANNEL_PERMISSION,
-            $extra);
+            $extra
+        );
     }
 
     public static function generateDynamicKey($appId, $appCertificate, $channelName, $ts, $randomInt, $uid, $expiredTs, $serviceType, $extra)
@@ -72,7 +75,8 @@ class DynamicKey5
             $ts,
             $randomInt,
             $expiredTs,
-            $extra);
+            $extra
+        );
 
         $content = self::packContent($serviceType, $signature, hex2bin($appId), $ts, $randomInt, $expiredTs, $extra);
 
