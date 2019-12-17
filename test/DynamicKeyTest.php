@@ -14,7 +14,7 @@ class DynamicKeyTest extends TestCase
     private $uid = 2882341273;
     private $expiredTs = 1446455471;
 
-    function testRecordingKey()
+    public function testRecordingKey()
     {
         $expected = '004e0c24ac56aae05229a6d9389860a1a0e25e56da8970ca35de60c44645bbae8a215061b3314464554720383bbf51446455471';
 
@@ -25,12 +25,13 @@ class DynamicKeyTest extends TestCase
             $this->ts,
             $this->randomInt,
             $this->uid,
-            $this->expiredTs);
+            $this->expiredTs
+        );
 
         $this->assertEquals($expected, $actual);
     }
 
-    function testMediaChannelKey()
+    public function testMediaChannelKey()
     {
         $expected = '004d0ec5ee3179c964fe7c0485c045541de6bff332b970ca35de60c44645bbae8a215061b3314464554720383bbf51446455471';
 
@@ -41,11 +42,9 @@ class DynamicKeyTest extends TestCase
             $this->ts,
             $this->randomInt,
             $this->uid,
-            $this->expiredTs);
+            $this->expiredTs
+        );
 
         $this->assertEquals($expected, $actual);
     }
 }
-
-
-

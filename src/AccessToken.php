@@ -2,7 +2,6 @@
 
 namespace Agora\AgoraDynamicKey;
 
-
 class AccessToken
 {
     private $appId;
@@ -35,6 +34,7 @@ class AccessToken
     const PRIVILEGE_INVITE_PUBLISH_VIDEO_STREAM  = 11;
     const PRIVILEGE_INVITE_PUBLISH_DATA_STREAM   = 12;
     const PRIVILEGE_ADMINISTRATE_CHANNEL         = 101;
+    const PRIVILEGE_RTM_LOGIN                    = 1000;
 
     private function __construct()
     {
@@ -58,7 +58,8 @@ class AccessToken
      *
      * @return static|null
      */
-    public static function init($appId, $appCertificate, $channelName, $uid){
+    public static function init($appId, $appCertificate, $channelName, $uid)
+    {
         $accessToken = new static();
 
         $accessToken->throwExceptionIfEmptyString("appID", $appId);
@@ -71,6 +72,7 @@ class AccessToken
 
         $accessToken->setUid($uid);
 
+        $accessToken->message = new Message();
         return $accessToken;
     }
 
@@ -83,10 +85,11 @@ class AccessToken
      *
      * @return null|static
      */
-    public static function initWithToken($token, $appCertificate, $channelName, $uid){
+    public static function initWithToken($token, $appCertificate, $channelName, $uid)
+    {
         $accessToken = new static();
 
-        if(!$accessToken->extract($token, $appCertificate, $channelName, $uid)){
+        if (!$accessToken->extract($token, $appCertificate, $channelName, $uid)) {
             return null;
         }
 
@@ -158,7 +161,8 @@ class AccessToken
      * @throws \InvalidArgumentException
      *   Throw this exception if $str value is empty string
      */
-    private function throwExceptionIfEmptyString($name, $str){
+    private function throwExceptionIfEmptyString($name, $str)
+    {
         if (is_string($str) && $str !== "") {
             return;
         }
@@ -173,11 +177,12 @@ class AccessToken
      * @param $uid
      * @return bool
      */
-    private function extract($token, $appCertificate, $channelName, $uid){
+    private function extract($token, $appCertificate, $channelName, $uid)
+    {
         $ver_len = 3;
         $appid_len = 32;
         $version = substr($token, 0, $ver_len);
-        if($version !== "006" ){
+        if ($version !== "006") {
             echo 'invalid version '.$version;
             return false;
         }
@@ -224,4 +229,3 @@ class AccessToken
         return pack("v", strlen($value)) . $value;
     }
 }
-

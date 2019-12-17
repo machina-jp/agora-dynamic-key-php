@@ -17,7 +17,8 @@ echo DynamicKey5::generateRecordingKey(
     $ts,
     $randomInt,
     $uid,
-    $expiredTs) . "\n";
+    $expiredTs
+) . "\n";
 
 echo DynamicKey5::generateMediaChannelKey(
     $appID,
@@ -26,7 +27,8 @@ echo DynamicKey5::generateMediaChannelKey(
     $ts,
     $randomInt,
     $uid,
-    $expiredTs) . "\n";
+    $expiredTs
+) . "\n";
 
 global $NO_UPLOAD;
 
@@ -38,7 +40,8 @@ echo DynamicKey5::generateInChannelPermissionKey(
     $randomInt,
     $uid,
     $expiredTs,
-    DynamicKey5::NO_UPLOAD) . "\n";
+    DynamicKey5::NO_UPLOAD
+) . "\n";
 
 echo DynamicKey5::generateInChannelPermissionKey(
     $appID,
@@ -48,4 +51,5 @@ echo DynamicKey5::generateInChannelPermissionKey(
     $randomInt,
     $uid,
     $expiredTs,
-    DynamicKey5::AUDIO_VIDEO_UPLOAD) . "\n";
+    DynamicKey5::AUDIO_VIDEO_UPLOAD
+) . "\n";

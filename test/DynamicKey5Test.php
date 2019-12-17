@@ -24,7 +24,8 @@ class DynamicKey5Test extends TestCase
             $this->ts,
             $this->randomInt,
             $this->uid,
-            $this->expiredTs);
+            $this->expiredTs
+        );
 
         $this->assertEquals($expected, $actual);
     }
@@ -40,7 +41,8 @@ class DynamicKey5Test extends TestCase
             $this->ts,
             $this->randomInt,
             $this->uid,
-            $this->expiredTs);
+            $this->expiredTs
+        );
 
         $this->assertEquals($expected, $actual);
     }
@@ -56,7 +58,8 @@ class DynamicKey5Test extends TestCase
             $this->randomInt,
             $this->uid,
             $this->expiredTs,
-            DynamicKey5::NO_UPLOAD);
+            DynamicKey5::NO_UPLOAD
+        );
 
         $this->assertEquals($noUpload, $generatedNoUpload);
 
@@ -69,7 +72,8 @@ class DynamicKey5Test extends TestCase
             $this->randomInt,
             $this->uid,
             $this->expiredTs,
-            DynamicKey5::AUDIO_VIDEO_UPLOAD);
+            DynamicKey5::AUDIO_VIDEO_UPLOAD
+        );
 
         $this->assertEquals($audioVideoUpload, $generatedAudioVideoUpload);
     }
