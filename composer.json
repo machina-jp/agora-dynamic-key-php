@@ -1,5 +1,5 @@
 {
-    "name": "chatwork/agora-dynamic-key-php",
+    "name": "machina/agora-dynamic-key-php",
     "type": "library",
     "license": "MIT",
     "autoload": {
